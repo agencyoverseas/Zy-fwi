@@ -1,0 +1,19 @@
+{
+  "name": "ZYÉ — Assistant vocal",
+  "short_name": "ZYÉ",
+  "description": "Assistant vocal du quotidien pour personnes aveugles et malvoyantes : lecture caméra, courses, mémos, rappels.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06211B",
+  "theme_color": "#06211B",
+  "categories": ["accessibility", "lifestyle", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

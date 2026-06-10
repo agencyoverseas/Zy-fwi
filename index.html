@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#06211B">
+<meta name="description" content="ZYÉ — assistant vocal du quotidien pour personnes aveugles et malvoyantes.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ZYÉ">
+<title>ZYÉ — Assistant vocal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app/styles.css">
+</head>
+<body>
+
+<div id="live" class="sr-only" role="status" aria-live="polite"></div>
+
+<div id="start-screen">
+  <h1>ZYÉ</h1>
+  <p>Assistant vocal du quotidien.<br>Lecture, courses, mémos, rappels, repères.</p>
+  <button id="btn-start" aria-label="Toucher pour démarrer l'assistant vocal">
+    👆 Toucher ici<br>pour démarrer
+  </button>
+  <p class="credit">NexusAI Agency</p>
+</div>
+
+<header>
+  <div>
+    <span class="brand">ZYÉ</span>
+    <span class="sub" id="plan-badge">Gratuit</span>
+  </div>
+  <div class="hbtns">
+    <button class="hbtn" id="btn-help" aria-label="Aide vocale">❓</button>
+    <button class="hbtn" id="btn-mute" aria-label="Couper ou activer la voix de l'application" aria-pressed="false">🔊</button>
+    <button class="hbtn" id="btn-settings" aria-label="Réglages et compte">⚙️</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ACCUEIL -->
+  <section class="screen active" id="screen-home">
+    <button class="sos-btn" id="btn-sos" aria-label="SOS. Appeler mon contact d'urgence et donner ma position.">🆘 SOS — Appeler de l'aide</button>
+    <div class="grid">
+      <button class="module-btn" data-go="lire" aria-label="Lire et reconnaître avec la caméra.">
+        <span class="ico">📷</span><span><span class="t">Lire & voir</span><span class="d">Texte, couleurs, argent, autour de moi</span></span>
+      </button>
+      <button class="module-btn" data-go="courses" aria-label="Ma liste de courses.">
+        <span class="ico">🛒</span><span><span class="t">Courses</span><span class="d">Ajouter et écouter ma liste</span></span>
+      </button>
+      <button class="module-btn" data-go="memos" aria-label="Mes mémos vocaux.">
+        <span class="ico">🎙️</span><span><span class="t">Mémos</span><span class="d">Dicter et réécouter</span></span>
+      </button>
+      <button class="module-btn" data-go="rappels" aria-label="Mes rappels. Médicaments et rendez-vous.">
+        <span class="ico">⏰</span><span><span class="t">Rappels</span><span class="d">Médicaments, rendez-vous</span></span>
+      </button>
+      <button class="module-btn" id="btn-ou" aria-label="Où suis-je ? Donne mon adresse approximative.">
+        <span class="ico">📍</span><span><span class="t">Où suis-je</span><span class="d">Mon adresse approximative</span></span>
+      </button>
+      <button class="module-btn" id="btn-heure" aria-label="Quelle heure est-il ?">
+        <span class="ico">🕐</span><span><span class="t">L'heure</span><span class="d">Heure et date du jour</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- LIRE & VOIR (multi-modes) -->
+  <section class="screen" id="screen-lire">
+    <button class="back-btn" data-go="home">⬅️ Retour à l'accueil</button>
+    <h2 class="screen-title">📷 Lire & voir</h2>
+    <p class="hint" id="lire-quota"></p>
+    <button class="big-btn btn-gold" data-mode="lire">📖 Lire le texte</button>
+    <button class="big-btn btn-line" data-mode="couleur">🎨 Quelle couleur ?</button>
+    <button class="big-btn btn-line" data-mode="argent">💶 Compter l'argent</button>
+    <button class="big-btn btn-line" data-mode="scene">🔭 Décrire autour de moi</button>
+    <input type="file" id="file-cam" accept="image/*" capture="environment" class="sr-only" aria-hidden="true" tabindex="-1">
+    <img id="photo-preview" alt="Photo prise">
+    <div class="spinner" id="read-spinner" aria-hidden="true"></div>
+    <div id="read-result" aria-live="polite"></div>
+    <button class="big-btn btn-line" id="btn-relire" style="display:none">🔁 Réécouter</button>
+    <div id="feedback-row" style="display:none">
+      <button class="big-btn btn-line" id="fb-ok">👍 Juste</button>
+      <button class="big-btn btn-line" id="fb-no">👎 Faux</button>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  <section class="screen" id="screen-courses">
+    <button class="back-btn" data-go="home">⬅️ Retour à l'accueil</button>
+    <h2 class="screen-title">🛒 Courses</h2>
+    <button class="big-btn btn-gold" id="btn-add-course">➕ Ajouter un article (voix)</button>
+    <button class="big-btn btn-line" id="btn-read-courses">🔊 Écouter ma liste</button>
+    <div id="suggestions"></div>
+    <div id="courses-list"></div>
+    <button class="big-btn btn-danger" id="btn-clear-courses">🗑️ Vider la liste</button>
+  </section>
+
+  <!-- MÉMOS -->
+  <section class="screen" id="screen-memos">
+    <button class="back-btn" data-go="home">⬅️ Retour à l'accueil</button>
+    <h2 class="screen-title">🎙️ Mémos</h2>
+    <button class="big-btn btn-gold" id="btn-add-memo">➕ Nouveau mémo (voix)</button>
+    <button class="big-btn btn-line" id="btn-read-memos">🔊 Écouter mes mémos</button>
+    <div id="memos-list"></div>
+  </section>
+
+  <!-- RAPPELS -->
+  <section class="screen" id="screen-rappels">
+    <button class="back-btn" data-go="home">⬅️ Retour à l'accueil</button>
+    <h2 class="screen-title">⏰ Rappels</h2>
+    <div id="rappel-form">
+      <p class="step-q">1. Quel type de rappel ?</p>
+      <div class="choice-row" id="rappel-types">
+        <button class="big-btn btn-line sel" data-type="Médicament">💊 Médicament</button>
+        <button class="big-btn btn-line" data-type="Rendez-vous">📅 Rendez-vous</button>
+        <button class="big-btn btn-line" data-type="Autre">📌 Autre</button>
+      </div>
+      <p class="step-q">2. À quelle heure ?</p>
+      <div class="stepper">
+        <button id="h-moins" aria-label="Heure moins une">−</button>
+        <div class="val" id="h-val" aria-live="polite">08 h</div>
+        <button id="h-plus" aria-label="Heure plus une">+</button>
+      </div>
+      <div class="stepper">
+        <button id="m-moins" aria-label="Minutes moins quinze">−</button>
+        <div class="val" id="m-val" aria-live="polite">00 min</div>
+        <button id="m-plus" aria-label="Minutes plus quinze">+</button>
+      </div>
+      <button class="big-btn btn-orange" id="btn-save-rappel">✅ Enregistrer le rappel</button>
+      <p class="hint">Le rappel sonne tous les jours à l'heure choisie, application ouverte.</p>
+    </div>
+    <h2 class="screen-title sub-title">Mes rappels actifs</h2>
+    <div id="rappels-list"></div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section class="screen" id="screen-settings">
+    <button class="back-btn" data-go="home">⬅️ Retour à l'accueil</button>
+    <h2 class="screen-title">⚙️ Réglages</h2>
+
+    <div class="card-block">
+      <h3>Mon offre</h3>
+      <p id="plan-line">Offre gratuite.</p>
+      <button class="big-btn btn-gold" id="btn-upgrade">⭐ Passer à ZYÉ Plus</button>
+    </div>
+
+    <div class="card-block">
+      <h3>Contact d'urgence (SOS)</h3>
+      <p class="consent-text">Le bouton SOS appellera ce numéro et annoncera votre position.</p>
+      <p id="sos-current">Aucun contact enregistré.</p>
+      <button class="big-btn btn-line" id="btn-set-sos">✏️ Définir le contact d'urgence</button>
+    </div>
+
+    <div class="card-block">
+      <h3>Aider à améliorer ZYÉ</h3>
+      <p class="consent-text">
+        Vous pouvez partager vos lectures (texte, et si vous le souhaitez les photos)
+        pour aider à rendre l'assistant plus précis. C'est facultatif, anonyme,
+        et vous pouvez l'arrêter à tout moment. Rien n'est partagé sans votre accord.
+      </p>
+      <label class="switch-row">
+        <span>Partager le texte de mes lectures</span>
+        <input type="checkbox" id="consent-text" class="switch">
+      </label>
+      <label class="switch-row">
+        <span>Partager aussi les photos</span>
+        <input type="checkbox" id="consent-photo" class="switch">
+      </label>
+      <button class="big-btn btn-line" id="btn-read-consent">🔊 Écouter cette explication</button>
+      <button class="big-btn btn-danger" id="btn-revoke">🗑️ Supprimer mes contributions</button>
+    </div>
+
+    <div class="card-block">
+      <h3>Vitesse de la voix</h3>
+      <div class="stepper">
+        <button id="rate-moins" aria-label="Voix plus lente">−</button>
+        <div class="val" id="rate-val">Normale</div>
+        <button id="rate-plus" aria-label="Voix plus rapide">+</button>
+      </div>
+    </div>
+
+    <p class="version-line">ZYÉ v1.1 — NexusAI Agency</p>
+  </section>
+
+</main>
+
+<!-- BARRE VOCALE -->
+<div id="voicebar">
+  <div id="subtitle">…</div>
+  <button id="btn-mic" aria-label="Commande vocale. Toucher et parler.">🎤</button>
+</div>
+
+<!-- OVERLAY SAISIE TEXTE -->
+<div class="overlay" id="input-overlay" role="dialog" aria-modal="true" aria-labelledby="input-title">
+  <h3 id="input-title">Saisie</h3>
+  <p id="input-question">Écrivez votre texte :</p>
+  <input id="input-field" type="text" autocomplete="off">
+  <button class="big-btn btn-gold" id="input-ok">✅ Valider</button>
+  <button class="big-btn btn-line" id="input-cancel">✖️ Annuler</button>
+</div>
+
+<!-- OVERLAY ALARME -->
+<div class="overlay" id="alarm-overlay" role="alertdialog" aria-modal="true">
+  <h3>⏰ RAPPEL</h3>
+  <p id="alarm-text">…</p>
+  <button class="big-btn btn-gold" id="alarm-ok">✅ C'est noté</button>
+</div>
+
+<!-- OVERLAY UPGRADE -->
+<div class="overlay" id="upgrade-overlay" role="dialog" aria-modal="true">
+  <h3>⭐ ZYÉ Plus</h3>
+  <p>Lecture et reconnaissance illimitées, sauvegarde de vos listes sur tous vos appareils, et voix premium.</p>
+  <button class="big-btn btn-gold" id="upgrade-go">💳 S'abonner</button>
+  <button class="big-btn btn-line" id="upgrade-cancel">Plus tard</button>
+</div>
+
+<script src="app/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app/supabase.js"></script>
+<script src="app/voice.js"></script>
+<script src="app/geo.js"></script>
+<script src="app/learning.js"></script>
+<script src="app/collection.js"></script>
+<script src="app/tiers.js"></script>
+<script src="app/app.js"></script>
+<script type="module" src="app/vapi.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+</script>
+</body>
+</html>
