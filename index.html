@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#06211B">
 <meta name="description" content="ZYÉ — assistant vocal du quotidien pour personnes aveugles et malvoyantes.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ZYÉ">
@@ -14,7 +14,163 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app/styles.css">
+<style>
+:root{
+  --bg:#06211B; --bg-2:#0F4A3C; --card:#0B3329;
+  --cream:#F5EFE3; --gold:#D5B56F; --gold-hi:#F0D9A6;
+  --orange:#E8954C; --danger:#FF8A7A; --ok:#9BE3B0; --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Atkinson Hyperlegible',sans-serif;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(213,181,111,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(232,149,76,.07), transparent 55%),
+    var(--bg);
+  color:var(--cream);font-size:22px;line-height:1.35;
+  min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;
+}
+button{font-family:inherit;color:inherit;border:none;cursor:pointer;background:none;font-size:inherit}
+button:focus-visible{outline:6px solid var(--gold-hi);outline-offset:3px}
+input:focus-visible{outline:6px solid var(--gold-hi)}
+
+#start-screen{position:fixed;inset:0;z-index:100;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:28px;padding:24px;text-align:center}
+#start-screen h1{font-size:64px;letter-spacing:.06em;color:var(--gold);font-weight:700}
+#start-screen p{max-width:520px;font-size:24px;opacity:.9}
+#start-screen .credit{font-size:17px;opacity:.55}
+#btn-start{width:min(92vw,520px);min-height:160px;border-radius:28px;
+  background:linear-gradient(160deg,var(--gold-hi),var(--gold) 55%,#B79750);
+  color:#06211B;font-size:34px;font-weight:700;
+  box-shadow:0 14px 40px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.35)}
+#btn-start:active{transform:scale(.985)}
+
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px 10px;gap:10px}
+header .brand{font-weight:700;font-size:26px;color:var(--gold);letter-spacing:.05em}
+header .sub{font-size:15px;opacity:.65;display:block;letter-spacing:.02em}
+.hbtns{display:flex;gap:10px}
+.hbtn{min-width:64px;min-height:64px;border-radius:16px;padding:8px 12px;
+  background:var(--card);border:2px solid rgba(213,181,111,.35);font-size:22px;font-weight:700}
+
+main{flex:1;padding:6px 16px 140px;width:100%;max-width:680px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block;animation:fadeup .25s ease both}
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.grid{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.module-btn{width:100%;min-height:118px;border-radius:var(--radius);
+  background:linear-gradient(170deg,var(--bg-2),var(--card));
+  border:2px solid rgba(213,181,111,.35);display:flex;align-items:center;gap:18px;
+  padding:18px 20px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.module-btn:active{transform:scale(.99)}
+.module-btn .ico{width:72px;height:72px;flex:0 0 72px;border-radius:18px;
+  background:rgba(213,181,111,.15);border:2px solid rgba(213,181,111,.4);
+  display:flex;align-items:center;justify-content:center;font-size:38px}
+.module-btn .t{font-size:28px;font-weight:700}
+.module-btn .d{font-size:17px;opacity:.75;margin-top:2px}
+
+.big-btn{width:100%;min-height:96px;border-radius:var(--radius);font-size:26px;
+  font-weight:700;padding:16px 20px;display:flex;align-items:center;justify-content:center;
+  gap:14px;box-shadow:0 8px 22px rgba(0,0,0,.35);margin-bottom:14px}
+.big-btn:active{transform:scale(.99)}
+.btn-gold{background:linear-gradient(160deg,var(--gold-hi),var(--gold) 60%,#B79750);color:#06211B}
+.btn-orange{background:linear-gradient(160deg,#F2A968,var(--orange));color:#2A1404}
+.btn-line{background:var(--card);border:2px solid rgba(213,181,111,.4);color:var(--cream)}
+.btn-danger{background:rgba(255,138,122,.12);border:2px solid rgba(255,138,122,.55);color:var(--danger)}
+
+.back-btn{width:100%;min-height:72px;border-radius:18px;margin:4px 0 18px;
+  background:var(--card);border:2px solid rgba(213,181,111,.3);font-size:22px;
+  font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+h2.screen-title{font-size:34px;color:var(--gold);margin-bottom:14px;font-weight:700}
+.sub-title{font-size:26px;margin-top:8px}
+.step-q{font-size:21px;margin-bottom:10px}
+
+.item-row{background:var(--card);border:2px solid rgba(213,181,111,.25);
+  border-radius:18px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.item-row .txt{flex:1;font-size:24px;word-break:break-word}
+.item-row .meta{display:block;font-size:15px;opacity:.6;margin-top:4px}
+.item-row button{min-width:76px;min-height:76px;border-radius:14px;font-size:30px;flex:0 0 auto}
+.empty{opacity:.7;font-size:22px;padding:18px 6px;font-style:italic}
+
+#suggestions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.sugg{min-height:60px;border-radius:14px;padding:10px 16px;font-size:19px;font-weight:700;
+  background:rgba(213,181,111,.12);border:2px dashed rgba(213,181,111,.45);color:var(--gold-hi)}
+
+#voicebar{position:fixed;left:0;right:0;bottom:0;z-index:60;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top, rgba(4,20,16,.97) 70%, transparent);
+  display:flex;gap:12px;align-items:flex-end;max-width:680px;margin:0 auto}
+#subtitle{flex:1;min-height:58px;max-height:120px;overflow:hidden;
+  background:rgba(11,51,41,.92);border:2px solid rgba(213,181,111,.3);
+  border-radius:16px;padding:10px 14px;font-size:19px;display:flex;align-items:center}
+#btn-mic{width:96px;height:96px;flex:0 0 96px;border-radius:50%;
+  background:linear-gradient(160deg,#F2A968,var(--orange));color:#2A1404;font-size:42px;
+  box-shadow:0 10px 28px rgba(232,149,76,.4);border:3px solid rgba(255,255,255,.25)}
+#btn-mic.listening{background:linear-gradient(160deg,#FF9F8F,var(--danger));animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,138,122,.5)}50%{box-shadow:0 0 0 18px rgba(255,138,122,0)}}
+
+.overlay{position:fixed;inset:0;z-index:90;background:rgba(4,18,14,.96);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:22px;gap:18px;text-align:center}
+.overlay.show{display:flex}
+.overlay h3{font-size:32px;color:var(--gold)}
+.overlay p{font-size:23px;max-width:540px}
+.overlay input{width:min(92vw,520px);min-height:84px;border-radius:18px;border:3px solid var(--gold);
+  background:#0B3329;color:var(--cream);font-size:26px;padding:0 18px;font-family:inherit}
+.overlay .big-btn{width:min(92vw,520px)}
+#alarm-overlay{background:linear-gradient(160deg,#3A1F08,#5A2E0C);z-index:95}
+#alarm-overlay h3{color:#FFD9A8;font-size:40px}
+#alarm-overlay p{font-size:30px;font-weight:700}
+
+#photo-preview{max-width:88vw;max-height:34vh;border-radius:16px;
+  border:3px solid rgba(213,181,111,.5);display:none}
+#read-result{background:var(--card);border:2px solid rgba(213,181,111,.35);border-radius:18px;
+  padding:18px;font-size:24px;margin-top:6px;display:none;white-space:pre-wrap}
+#feedback-row{display:flex;gap:12px}
+#feedback-row .big-btn{flex:1}
+.spinner{width:64px;height:64px;border-radius:50%;margin:10px auto;
+  border:7px solid rgba(213,181,111,.25);border-top-color:var(--gold);
+  animation:spin .9s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.stepper{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.stepper button{width:96px;height:96px;border-radius:20px;font-size:44px;font-weight:700;
+  background:var(--card);border:2px solid rgba(213,181,111,.45);flex:0 0 auto}
+.stepper .val{flex:1;text-align:center;font-size:42px;font-weight:700;color:var(--gold-hi);
+  background:rgba(213,181,111,.08);border-radius:20px;padding:14px 0;border:2px solid rgba(213,181,111,.25)}
+.choice-row{display:flex;gap:12px;margin-bottom:14px}
+.choice-row .big-btn{flex:1;margin-bottom:0;min-height:88px;font-size:22px}
+.choice-row .big-btn.sel{outline:5px solid var(--gold-hi);outline-offset:2px}
+
+.card-block{background:var(--card);border:2px solid rgba(213,181,111,.25);
+  border-radius:18px;padding:18px;margin-bottom:18px}
+.card-block h3{font-size:24px;color:var(--gold);margin-bottom:10px}
+.consent-text{font-size:19px;opacity:.9;margin-bottom:14px;line-height:1.45}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  min-height:72px;font-size:21px;padding:8px 0}
+.switch{width:72px;height:44px;-webkit-appearance:none;appearance:none;border-radius:24px;
+  background:#234138;position:relative;flex:0 0 auto;border:2px solid rgba(213,181,111,.4)}
+.switch:checked{background:var(--orange)}
+.switch::after{content:"";position:absolute;width:34px;height:34px;border-radius:50%;
+  background:var(--cream);top:3px;left:4px;transition:.2s}
+.switch:checked::after{left:32px}
+
+.hint{font-size:17px;opacity:.6;margin:6px 2px 16px}
+.version-line{font-size:16px;opacity:.5;text-align:center;margin-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- SOS ---------- */
+.sos-btn{width:100%;min-height:104px;border-radius:var(--radius);margin:4px 0 18px;
+  background:linear-gradient(160deg,#FF7A6B,#D6342A);color:#fff;font-size:30px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  box-shadow:0 10px 28px rgba(214,52,42,.45);border:3px solid rgba(255,255,255,.25)}
+.sos-btn:active{transform:scale(.99)}
+
+</style>
 </head>
 <body>
 
@@ -45,6 +201,7 @@
 
   <!-- ACCUEIL -->
   <section class="screen active" id="screen-home">
+    <button class="big-btn btn-gold" id="btn-install" style="display:none" aria-label="Installer l'application ZYE sur l'ecran d'accueil du telephone">⬇️ Installer l'app sur mon téléphone</button>
     <button class="sos-btn" id="btn-sos" aria-label="SOS. Appeler mon contact d'urgence et donner ma position.">🆘 SOS — Appeler de l'aide</button>
     <div class="grid">
       <button class="module-btn" data-go="lire" aria-label="Lire et reconnaître avec la caméra.">
@@ -218,20 +375,1103 @@
   <button class="big-btn btn-line" id="upgrade-cancel">Plus tard</button>
 </div>
 
-<script src="app/config.js"></script>
+<script>
+/* Configuration publique de ZYÉ (valeurs publiques par nature).
+   NE JAMAIS mettre ici la service_role ni la clé Anthropic. */
+window.ZYE_CONFIG = {
+  SUPABASE_URL: "https://vvtnwavxgnqrgemyaqjm.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2dG53YXZ4Z25xcmdlbXlhcWptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODgwODQsImV4cCI6MjA5NjA2NDA4NH0.ll6rtM-JVMCPHsjGeDey6HMsYS9scDD82BNLE9pIHBE",
+  VISION_ENDPOINT: "https://vvtnwavxgnqrgemyaqjm.supabase.co/functions/v1/zye-vision",
+  CHECKOUT_ENDPOINT: "__CHECKOUT_ENDPOINT__",     // Edge Function "zye-create-checkout" (à déployer)
+  STRIPE_CHECKOUT_URL: "__STRIPE_CHECKOUT_URL__", // repli : Payment Link statique
+  FREE_DAILY_READS: 10,
+
+  // --- Assistant vocal Vapi (web, sans numéro) ---
+  VAPI_PUBLIC_KEY: "__VAPI_PUBLIC_KEY__",         // clé PUBLIQUE Vapi (Dashboard > API Keys)
+  VAPI_MODEL_PROVIDER: "anthropic",               // cerveau = Claude
+  VAPI_MODEL: "claude-haiku-4-5-20251001",        // Claude Haiku (FR, rapide, pas cher)
+  VAPI_VOICE_PROVIDER: "__VAPI_VOICE_PROVIDER__", // ex: "11labs" pour une voix FR naturelle
+  VAPI_VOICE_ID: "__VAPI_VOICE_ID__"              // ex: id d'une voix française 11labs
+};
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app/supabase.js"></script>
-<script src="app/voice.js"></script>
-<script src="app/geo.js"></script>
-<script src="app/learning.js"></script>
-<script src="app/collection.js"></script>
-<script src="app/tiers.js"></script>
-<script src="app/app.js"></script>
-<script type="module" src="app/vapi.js"></script>
+<script>
+/* Client Supabase + auth anonyme.
+   L'utilisateur n'a pas à créer de compte : on utilise une session anonyme
+   (signInAnonymously) pour rattacher ses données et contributions sans friction. */
+window.ZYE_DB = (function(){
+  const cfg = window.ZYE_CONFIG || {};
+  let client = null;
+  let ready = false;
+
+  function init(){
+    if(!cfg.SUPABASE_URL || cfg.SUPABASE_URL.startsWith("__")) return null;
+    if(!window.supabase) return null;
+    client = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
+      auth:{ persistSession:true, autoRefreshToken:true }
+    });
+    return client;
+  }
+
+  async function ensureSession(){
+    if(!client) init();
+    if(!client) return null;
+    try{
+      const { data } = await client.auth.getSession();
+      if(data && data.session){ ready = true; return data.session.user; }
+      const res = await client.auth.signInAnonymously();
+      if(res.error){ console.warn('Auth anonyme indisponible', res.error.message); return null; }
+      ready = true;
+      return res.data.user;
+    }catch(e){ console.warn('Session Supabase KO', e); return null; }
+  }
+
+  function getClient(){ return client; }
+  function isReady(){ return ready; }
+
+  return { init, ensureSession, getClient, isReady };
+})();
+
+</script>
+<script>
+/* Moteur voix : synthèse (TTS) + reconnaissance (STT) avec secours saisie texte. */
+window.ZYE_VOICE = (function(){
+  let frVoice = null;
+  let muted = false;
+  let rate = 0.98;
+
+  function pickVoice(){
+    const vs = speechSynthesis.getVoices();
+    frVoice = vs.find(v=>/fr[-_]FR/i.test(v.lang) && /female|amelie|audrey|thomas|google/i.test(v.name))
+           || vs.find(v=>/^fr/i.test(v.lang)) || null;
+  }
+  if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+  const sub = ()=>document.getElementById('subtitle');
+  const live = ()=>document.getElementById('live');
+
+  function setSubtitle(t){ if(sub()) sub().textContent = t; }
+
+  function speak(text, {interrupt=true}={}){
+    setSubtitle(text);
+    if(live()) live().textContent = text;
+    if(muted || !('speechSynthesis' in window)) return;
+    if(interrupt) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='fr-FR'; if(frVoice) u.voice=frVoice; u.rate=rate; u.pitch=1;
+    speechSynthesis.speak(u);
+  }
+  function vibrate(p){ if(navigator.vibrate) try{navigator.vibrate(p)}catch(e){} }
+  function setMuted(m){ muted=m; if(m) speechSynthesis.cancel(); }
+  function isMuted(){ return muted; }
+  function setRate(r){ rate=r; }
+  function getRate(){ return rate; }
+  function unlock(){ try{ speechSynthesis.speak(new SpeechSynthesisUtterance('')); }catch(e){} }
+
+  const sttOK = ('SpeechRecognition' in window) || ('webkitSpeechRecognition' in window);
+  let recog = null;
+
+  /* Pose une question vocale, écoute la réponse, renvoie le texte à cb.
+     Si STT indisponible/refusé → overlay de saisie texte. */
+  function listen(question, cb){
+    if(!sttOK){ askText(question, cb); return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    try{
+      recog = new SR();
+      recog.lang='fr-FR'; recog.interimResults=false; recog.maxAlternatives=1;
+      const mic = document.getElementById('btn-mic');
+      let done=false;
+      recog.onresult = e=>{ done=true; mic.classList.remove('listening'); cb(e.results[0][0].transcript.trim()); };
+      recog.onerror = e=>{
+        mic.classList.remove('listening');
+        if(done) return;
+        if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+          speak("Le micro n'est pas autorisé. Écrivez votre texte."); askText(question, cb);
+        }else if(e.error==='no-speech'){ speak("Je n'ai rien entendu. Réessayez."); }
+        else askText(question, cb);
+      };
+      recog.onend = ()=>mic.classList.remove('listening');
+      speak(question);
+      setTimeout(()=>{
+        mic.classList.add('listening'); vibrate(40);
+        try{ recog.start(); }catch(e){}
+      }, Math.min(2600, 350 + question.length*55));
+    }catch(e){ askText(question, cb); }
+  }
+
+  let textCb=null;
+  function askText(question, cb){
+    textCb=cb;
+    document.getElementById('input-question').textContent = question;
+    const f=document.getElementById('input-field'); f.value='';
+    document.getElementById('input-overlay').classList.add('show');
+    setSubtitle(question);
+    setTimeout(()=>f.focus(),150);
+  }
+  function wireTextOverlay(){
+    document.getElementById('input-ok').onclick=()=>{
+      const v=document.getElementById('input-field').value.trim();
+      document.getElementById('input-overlay').classList.remove('show');
+      if(v&&textCb) textCb(v);
+    };
+    document.getElementById('input-cancel').onclick=()=>{
+      document.getElementById('input-overlay').classList.remove('show'); speak('Annulé.');
+    };
+    document.getElementById('input-field').addEventListener('keydown',e=>{
+      if(e.key==='Enter') document.getElementById('input-ok').click();
+    });
+  }
+
+  return { speak, listen, vibrate, setMuted, isMuted, setRate, getRate, unlock,
+           setSubtitle, wireTextOverlay, sttOK };
+})();
+
+</script>
+<script>
+/* Localisation vocale. Donne l'adresse approximative via GPS + géocodage inverse.
+   ⚠️ Trade-off : utilise Nominatim (OpenStreetMap), gratuit mais à faible volume.
+   Pour une vraie échelle, remplacer par un géocodeur payant (Google/Mapbox). */
+window.ZYE_GEO = (function(){
+  let last = null; // {lat, lon, label}
+
+  function get(){ return last; }
+
+  /* locate(onText) : récupère la position, renvoie une phrase prête à dire. */
+  function locate(onText, onError){
+    if(!('geolocation' in navigator)){ onError && onError("La localisation n'est pas disponible sur cet appareil."); return; }
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      const {latitude:lat, longitude:lon} = pos.coords;
+      last = {lat, lon, label:null};
+      try{
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&accept-language=fr`,
+                              {headers:{'Accept':'application/json'}});
+        if(r.ok){
+          const d = await r.json();
+          const a = d.address || {};
+          const parts = [
+            [a.house_number, a.road].filter(Boolean).join(' '),
+            a.suburb || a.neighbourhood || a.village || a.town || a.city,
+            a.postcode
+          ].filter(Boolean);
+          const label = parts.join(', ') || d.display_name;
+          last.label = label;
+          onText(label ? `Vous êtes vers : ${label}.` : phraseCoord(lat, lon));
+          return;
+        }
+      }catch(e){}
+      onText(phraseCoord(lat, lon));
+    }, err=>{
+      const map = {1:"L'accès à la localisation a été refusé.",2:"Position indisponible pour le moment.",3:"La localisation a pris trop de temps."};
+      onError && onError(map[err.code] || "Localisation impossible.");
+    }, {enableHighAccuracy:true, timeout:12000, maximumAge:30000});
+  }
+
+  function phraseCoord(lat, lon){
+    return `Position approximative : latitude ${lat.toFixed(4)}, longitude ${lon.toFixed(4)}.`;
+  }
+  /* Lien Google Maps de la dernière position (utile pour le SOS). */
+  function mapsLink(){
+    if(!last) return null;
+    return `https://maps.google.com/?q=${last.lat},${last.lon}`;
+  }
+
+  return { locate, get, mapsLink };
+})();
+
+</script>
+<script>
+/* Apprentissage LOCAL du quotidien — 100% sur l'appareil, rien n'est envoyé.
+   Apprend : fréquence des articles de courses, heures de rappels habituelles,
+   moments d'usage. Sert à proposer des suggestions pertinentes (l'app devient
+   "ses yeux et ses oreilles" en s'adaptant à la personne). */
+window.ZYE_LEARN = (function(){
+  const KEY = 'zye-learn-v1';
+  let model = { items:{}, rappelHours:{}, usageHours:{}, totalReads:0 };
+
+  function load(){
+    try{ const r = localStorage.getItem(KEY); if(r) model = JSON.parse(r); }catch(e){}
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(model)); }catch(e){} }
+
+  /* Article de courses ajouté → on incrémente sa fréquence */
+  function noteItem(name){
+    const k = name.trim().toLowerCase();
+    if(!k) return;
+    model.items[k] = (model.items[k]||0) + 1;
+    save();
+  }
+  /* Heure de rappel choisie → on retient les créneaux habituels */
+  function noteRappelHour(h){
+    model.rappelHours[h] = (model.rappelHours[h]||0)+1; save();
+  }
+  function noteUsage(){
+    const h = new Date().getHours();
+    model.usageHours[h] = (model.usageHours[h]||0)+1; save();
+  }
+  function noteRead(){ model.totalReads++; save(); }
+
+  /* Top articles déjà achetés, pour proposer un ajout rapide.
+     Exclut ceux déjà dans la liste courante. */
+  function topItems(excludeList, n=4){
+    const ex = new Set((excludeList||[]).map(x=>x.toLowerCase()));
+    return Object.entries(model.items)
+      .filter(([k,c])=>c>=2 && !ex.has(k))
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,n)
+      .map(([k])=>k.charAt(0).toUpperCase()+k.slice(1));
+  }
+  /* Heure de rappel la plus probable (pour pré-régler le stepper) */
+  function suggestedRappelHour(){
+    const e = Object.entries(model.rappelHours).sort((a,b)=>b[1]-a[1]);
+    return e.length ? parseInt(e[0][0],10) : 8;
+  }
+  function reset(){ model={items:{},rappelHours:{},usageHours:{},totalReads:0}; save(); }
+
+  return { load, noteItem, noteRappelHour, noteUsage, noteRead,
+           topItems, suggestedRappelHour, reset };
+})();
+
+</script>
+<script>
+/* Collecte de données OPT-IN, transparente et conforme RGPD.
+   PRINCIPE : rien n'est envoyé tant que l'utilisateur n'a pas activé le partage
+   dans Réglages. Consentement explicite, granulaire (texte / photo), révocable.
+   Ces données labellisées servent à améliorer l'IA — légalement, avec accord. */
+window.ZYE_COLLECT = (function(){
+  const CKEY = 'zye-consent-v1';
+  let consent = { text:false, photo:false, at:null };
+
+  function load(){
+    try{ const r=localStorage.getItem(CKEY); if(r) consent=JSON.parse(r); }catch(e){}
+    return consent;
+  }
+  function save(){ try{ localStorage.setItem(CKEY, JSON.stringify(consent)); }catch(e){} }
+
+  function setText(v){ consent.text=v; consent.at=Date.now(); save(); }
+  function setPhoto(v){ consent.photo=v; consent.at=Date.now(); save(); if(v) consent.text=true, save(); }
+  function get(){ return consent; }
+  function anyOn(){ return consent.text || consent.photo; }
+
+  /* Envoie une contribution si et seulement si l'utilisateur a consenti.
+     payload = { kind:'lecture', text, feedback:'ok'|'no'|null, imgB64?:string } */
+  async function contribute(payload){
+    if(!consent.text && !consent.photo) return;          // pas de consentement → rien
+    const db = window.ZYE_DB && window.ZYE_DB.getClient();
+    if(!db){ return; }                                    // backend non configuré
+    try{
+      const user = await window.ZYE_DB.ensureSession();
+      if(!user) return;
+
+      let image_path = null;
+      if(consent.photo && payload.imgB64){
+        const blob = b64ToBlob(payload.imgB64,'image/jpeg');
+        const path = `${user.id}/${Date.now()}.jpg`;
+        const up = await db.storage.from('zye-contributions').upload(path, blob, {contentType:'image/jpeg'});
+        if(!up.error) image_path = path;
+      }
+      await db.from('zye_contributions').insert({
+        kind: payload.kind || 'lecture',
+        text: consent.text ? (payload.text||null) : null,
+        feedback: payload.feedback || null,
+        image_path,
+        consent_text: consent.text,
+        consent_photo: consent.photo
+      });
+    }catch(e){ console.warn('Contribution non envoyée', e); }
+  }
+
+  /* Suppression RGPD : efface les contributions de l'utilisateur (droit à l'effacement). */
+  async function revokeAll(){
+    consent={text:false,photo:false,at:null}; save();
+    const db = window.ZYE_DB && window.ZYE_DB.getClient();
+    if(!db) return;
+    try{
+      const user = await window.ZYE_DB.ensureSession();
+      if(!user) return;
+      await db.from('zye_contributions').delete().eq('user_id', user.id);
+      const { data:list } = await db.storage.from('zye-contributions').list(user.id);
+      if(list && list.length){
+        await db.storage.from('zye-contributions').remove(list.map(f=>`${user.id}/${f.name}`));
+      }
+    }catch(e){ console.warn('Effacement partiel', e); }
+  }
+
+  function b64ToBlob(b64, type){
+    const bin = atob(b64); const arr = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+    return new Blob([arr],{type});
+  }
+
+  return { load, save, setText, setPhoto, get, anyOn, contribute, revokeAll };
+})();
+
+</script>
+<script>
+/* Offres GRATUIT / PLUS.
+   GRATUIT : courses, mémos, rappels, heure ILLIMITÉS. Lecture caméra = quota/jour.
+   PLUS    : lecture illimitée + sync cloud + voix premium.
+   La licence Plus est vérifiée côté Supabase (table licenses) après paiement Stripe. */
+window.ZYE_TIERS = (function(){
+  const QKEY = 'zye-quota-v1';
+  const cfg = window.ZYE_CONFIG || {};
+  const FREE = cfg.FREE_DAILY_READS || 10;
+  let plan = 'free';            // 'free' | 'plus'
+  let quota = { day:'', used:0 };
+
+  function load(){
+    try{ const r=localStorage.getItem(QKEY); if(r) quota=JSON.parse(r); }catch(e){}
+    rollover();
+  }
+  function rollover(){
+    const today = new Date().toISOString().slice(0,10);
+    if(quota.day !== today){ quota={day:today, used:0}; save(); }
+  }
+  function save(){ try{ localStorage.setItem(QKEY, JSON.stringify(quota)); }catch(e){} }
+
+  /* Vérifie la licence Plus côté serveur (anti-triche basique). */
+  async function refreshPlan(){
+    const db = window.ZYE_DB && window.ZYE_DB.getClient();
+    if(!db){ plan='free'; return plan; }
+    try{
+      const user = await window.ZYE_DB.ensureSession();
+      if(!user){ plan='free'; return plan; }
+      const { data } = await db.from('zye_licenses').select('active,expires_at')
+        .eq('user_id', user.id).maybeSingle();
+      if(data && data.active && (!data.expires_at || new Date(data.expires_at)>new Date())) plan='plus';
+      else plan='free';
+    }catch(e){ plan='free'; }
+    return plan;
+  }
+  function getPlan(){ return plan; }
+  function isPlus(){ return plan==='plus'; }
+
+  function canRead(){ rollover(); return plan==='plus' || quota.used < FREE; }
+  function consumeRead(){ rollover(); if(plan!=='plus'){ quota.used++; save(); } }
+  function remaining(){ rollover(); return plan==='plus' ? Infinity : Math.max(0, FREE-quota.used); }
+
+  function checkoutUrl(){ return cfg.STRIPE_CHECKOUT_URL; }
+
+  return { load, refreshPlan, getPlan, isPlus, canRead, consumeRead, remaining, checkoutUrl, FREE };
+})();
+
+</script>
+<script>
+/* ZYÉ v1.1 — orchestrateur principal.
+   Voix + apprentissage local + collecte opt-in + offres + 6 modules
+   (Lire&voir multi-modes, Courses, Mémos, Rappels, Où suis-je, Heure) + SOS. */
+(function(){
+  const V=window.ZYE_VOICE, L=window.ZYE_LEARN, C=window.ZYE_COLLECT, T=window.ZYE_TIERS, G=window.ZYE_GEO;
+  const cfg=window.ZYE_CONFIG||{};
+
+  const state={
+    data:{courses:[],memos:[],rappels:[]},
+    sos:null,                     // {name, tel}
+    currentScreen:'home',
+    rappelType:'Médicament', rH:8, rM:0,
+    alarmTimer:null, alarmRepeats:0,
+    lastRead:'', lastImg:null, lastMode:'lire',
+    rateIdx:1
+  };
+  const RATES=[0.78,0.98,1.18,1.4];
+  const RATE_LABELS=['Lente','Normale','Rapide','Très rapide'];
+  const MODE_OPEN={lire:"Lecture du texte.",couleur:"Détection de couleur.",argent:"Comptage de l'argent.",scene:"Description autour de vous."};
+
+  /* ---------- STOCKAGE ---------- */
+  const DKEY='zye-data-v1', SKEY='zye-sos-v1';
+  function loadData(){ try{const r=localStorage.getItem(DKEY); if(r) state.data=JSON.parse(r);}catch(e){}
+    try{const s=localStorage.getItem(SKEY); if(s) state.sos=JSON.parse(s);}catch(e){} }
+  function saveData(){ try{localStorage.setItem(DKEY,JSON.stringify(state.data));}catch(e){} if(T.isPlus()) cloudSync(); }
+  function saveSos(){ try{localStorage.setItem(SKEY,JSON.stringify(state.sos));}catch(e){} }
+
+  async function cloudSync(){ const db=window.ZYE_DB&&window.ZYE_DB.getClient(); if(!db) return;
+    try{const u=await window.ZYE_DB.ensureSession(); if(!u) return;
+      await db.from('zye_user_data').upsert({user_id:u.id,payload:state.data,updated_at:new Date().toISOString()});}catch(e){} }
+  async function cloudRestore(){ const db=window.ZYE_DB&&window.ZYE_DB.getClient(); if(!db||!T.isPlus()) return;
+    try{const u=await window.ZYE_DB.ensureSession(); if(!u) return;
+      const {data}=await db.from('zye_user_data').select('payload').eq('user_id',u.id).maybeSingle();
+      if(data&&data.payload) state.data=data.payload, saveData();}catch(e){} }
+
+  /* ---------- UTILS ---------- */
+  const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML;};
+  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const speak=(t,o)=>V.speak(t,o);
+
+  /* ---------- NAVIGATION ---------- */
+  const SCREENS=['home','lire','courses','memos','rappels','settings'];
+  const ANNOUNCE={
+    home:"Accueil. En haut, le bouton SOS rouge. En dessous : Lire et voir. Courses. Mémos. Rappels. Où suis-je. L'heure. En bas à droite, le bouton micro pour parler.",
+    lire:"Lire et voir. Quatre boutons : Lire le texte. Quelle couleur. Compter l'argent. Décrire autour de moi. Touchez-en un, la caméra s'ouvre.",
+    courses:"Liste de courses. Ajouter un article à la voix, ou écouter la liste.",
+    memos:"Mémos. Dicter un nouveau mémo, ou écouter vos mémos.",
+    rappels:"Rappels. Choisissez le type, réglez l'heure, puis enregistrez.",
+    settings:"Réglages. Offre, contact d'urgence, partage de données, vitesse de la voix."
+  };
+  function go(s,{silent=false}={}){
+    SCREENS.forEach(x=>document.getElementById('screen-'+x).classList.remove('active'));
+    document.getElementById('screen-'+s).classList.add('active');
+    state.currentScreen=s; window.scrollTo(0,0); V.vibrate(25); L.noteUsage();
+    if(!silent) speak(ANNOUNCE[s]);
+    if(s==='courses') renderCourses();
+    if(s==='memos') renderMemos();
+    if(s==='rappels') renderRappels();
+    if(s==='lire') updateQuotaLine();
+    if(s==='settings') renderSettings();
+  }
+  document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+  document.getElementById('btn-settings').onclick=()=>go('settings');
+
+  /* ---------- HEURE ---------- */
+  function sayTime(){
+    const n=new Date();
+    const J=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+    const M=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    const h=n.getHours(),m=n.getMinutes();
+    speak(`Il est ${h} heure${h>1?'s':''} ${m===0?'pile':m}. Nous sommes ${J[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]}.`);
+  }
+  document.getElementById('btn-heure').onclick=sayTime;
+
+  /* ---------- OÙ SUIS-JE ---------- */
+  function whereAmI(){
+    speak("Je cherche votre position, un instant.");
+    G.locate(txt=>speak(txt), err=>speak(err));
+  }
+  document.getElementById('btn-ou').onclick=whereAmI;
+
+  /* ---------- SOS ---------- */
+  function doSos(){
+    if(!state.sos || !state.sos.tel){
+      speak("Aucun contact d'urgence n'est défini. Touchez Réglages, puis Définir le contact d'urgence.");
+      go('settings'); return;
+    }
+    V.listen(`Dites oui pour appeler ${state.sos.name} en urgence.`, t=>{
+      if(/oui|appel|urgence|confirme/i.test(norm(t))){
+        speak(`Appel de ${state.sos.name}.`);
+        /* annonce la position en parallèle */
+        G.locate(txt=>speak(txt+" Vous pouvez la communiquer."), ()=>{});
+        setTimeout(()=>{ window.location.href='tel:'+state.sos.tel.replace(/[^+0-9]/g,''); }, 1200);
+      } else speak("Appel annulé.");
+    });
+  }
+  document.getElementById('btn-sos').onclick=doSos;
+
+  /* ---------- LIRE & VOIR (multi-modes) ---------- */
+  const fileCam=document.getElementById('file-cam');
+  function updateQuotaLine(){
+    const el=document.getElementById('lire-quota'); if(!el) return;
+    if(T.isPlus()){ el.textContent="Offre Plus : reconnaissances illimitées."; return; }
+    const r=T.remaining();
+    el.textContent = r>0 ? `Reconnaissances gratuites restantes aujourd'hui : ${r}.`
+                         : "Quota gratuit atteint. Passez à ZYÉ Plus pour un usage illimité.";
+  }
+  document.querySelectorAll('#screen-lire [data-mode]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(!T.canRead()){ speak("Vous avez atteint votre quota gratuit pour aujourd'hui. Touchez Réglages pour passer à ZYÉ Plus."); return; }
+      state.lastMode=b.dataset.mode;
+      speak(MODE_OPEN[state.lastMode]+" Ouverture de l'appareil photo. Visez, puis validez.");
+      setTimeout(()=>fileCam.click(),700);
+    });
+  });
+  fileCam.addEventListener('change',async()=>{
+    const f=fileCam.files[0]; if(!f) return;
+    const img=document.getElementById('photo-preview');
+    const res=document.getElementById('read-result');
+    const spin=document.getElementById('read-spinner');
+    res.style.display='none';
+    document.getElementById('btn-relire').style.display='none';
+    document.getElementById('feedback-row').style.display='none';
+    img.src=URL.createObjectURL(f); img.style.display='block';
+    spin.style.display='block';
+    speak("Photo reçue. Analyse en cours.");
+    try{
+      const b64=await resizeToBase64(f,1200,0.78);
+      state.lastImg=b64;
+      const out=await readWithVision(b64,state.lastMode);
+      spin.style.display='none';
+      state.lastRead=out;
+      res.textContent=out; res.style.display='block';
+      document.getElementById('btn-relire').style.display='flex';
+      document.getElementById('feedback-row').style.display='flex';
+      speak(out); V.vibrate([60,40,60]);
+      T.consumeRead(); L.noteRead(); updateQuotaLine();
+    }catch(e){
+      spin.style.display='none'; console.error(e);
+      speak("Désolé, l'analyse a échoué. Vérifiez la connexion et réessayez.");
+    }
+    fileCam.value='';
+  });
+  document.getElementById('btn-relire').onclick=()=>{ if(state.lastRead) speak(state.lastRead); };
+  document.getElementById('fb-ok').onclick=()=>{
+    C.contribute({kind:state.lastMode,text:state.lastRead,feedback:'ok',imgB64:state.lastImg});
+    speak("Merci, c'est noté."); document.getElementById('feedback-row').style.display='none'; };
+  document.getElementById('fb-no').onclick=()=>{
+    C.contribute({kind:state.lastMode,text:state.lastRead,feedback:'no',imgB64:state.lastImg});
+    speak("Merci, ça aidera à corriger."); document.getElementById('feedback-row').style.display='none'; };
+
+  function resizeToBase64(file,maxSide,q){
+    return new Promise((resolve,reject)=>{
+      const img=new Image();
+      img.onload=()=>{
+        const r=Math.min(1,maxSide/Math.max(img.width,img.height));
+        const c=document.createElement('canvas');
+        c.width=Math.round(img.width*r); c.height=Math.round(img.height*r);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg',q).split(',')[1]); URL.revokeObjectURL(img.src);
+      };
+      img.onerror=reject; img.src=URL.createObjectURL(file);
+    });
+  }
+  async function readWithVision(b64,mode){
+    if(!cfg.VISION_ENDPOINT || cfg.VISION_ENDPOINT.startsWith("__"))
+      return "Reconnaissance indisponible : le service d'analyse n'est pas configuré.";
+    const headers={"Content-Type":"application/json"};
+    const db=window.ZYE_DB&&window.ZYE_DB.getClient();
+    let auth=cfg.SUPABASE_ANON_KEY;
+    if(db){ try{const {data}=await db.auth.getSession();
+      if(data&&data.session) auth=data.session.access_token;}catch(e){} }
+    if(auth && !String(auth).startsWith("__")){ headers["Authorization"]="Bearer "+auth; headers["apikey"]=cfg.SUPABASE_ANON_KEY; }
+    const resp=await fetch(cfg.VISION_ENDPOINT,{method:"POST",headers,body:JSON.stringify({image:b64,mode})});
+    if(!resp.ok) throw new Error('Vision '+resp.status);
+    const data=await resp.json();
+    return (data.text||"").trim() || "Je n'ai pas réussi à analyser cette image.";
+  }
+
+  /* ---------- COURSES ---------- */
+  function renderSuggestions(){
+    const box=document.getElementById('suggestions'); if(!box) return;
+    const sg=L.topItems(state.data.courses,4); box.innerHTML='';
+    if(!sg.length) return;
+    sg.forEach(name=>{ const b=document.createElement('button'); b.className='sugg'; b.textContent='+ '+name;
+      b.setAttribute('aria-label',`Ajouter ${name}, article habituel`); b.onclick=()=>addCourse(name); box.appendChild(b); });
+  }
+  function renderCourses(){
+    renderSuggestions();
+    const box=document.getElementById('courses-list'); const Lc=state.data.courses;
+    box.innerHTML=Lc.length?'':'<p class="empty">Liste vide.</p>';
+    Lc.forEach((it,i)=>{ const row=document.createElement('div'); row.className='item-row';
+      row.innerHTML=`<span class="txt">${esc(it)}</span>`;
+      const del=document.createElement('button'); del.className='btn-danger'; del.textContent='✓';
+      del.setAttribute('aria-label',`Retirer ${it}`);
+      del.onclick=()=>{ state.data.courses.splice(i,1); saveData(); renderCourses(); speak(`${it}, retiré.`); V.vibrate(30); };
+      row.appendChild(del); box.appendChild(row); });
+  }
+  function addCourse(item){
+    item=item.replace(/^(ajoute[rz]?|mets?)\s+/i,'').replace(/\s+(à|a|dans|sur)\s+(la|ma)\s+liste.*$/i,'').trim();
+    if(!item) return;
+    state.data.courses.push(cap(item)); L.noteItem(item); saveData(); renderCourses();
+    const n=state.data.courses.length; speak(`${item}, ajouté. ${n} article${n>1?'s':''} dans la liste.`);
+  }
+  function readCourses(){
+    const Lc=state.data.courses;
+    if(!Lc.length){ speak("Votre liste de courses est vide."); return; }
+    speak(`Votre liste : ${Lc.length} article${Lc.length>1?'s':''}. `+Lc.map((x,i)=>`${i+1}. ${x}`).join('. ')+'.');
+  }
+  document.getElementById('btn-add-course').onclick=()=>V.listen("Quel article voulez-vous ajouter ?",addCourse);
+  document.getElementById('btn-read-courses').onclick=readCourses;
+  document.getElementById('btn-clear-courses').onclick=()=>{
+    if(!state.data.courses.length){ speak('La liste est déjà vide.'); return; }
+    V.listen("Dites oui pour vider toute la liste.",t=>{
+      if(/oui|ouais|confirme|vide/i.test(t)){ state.data.courses=[]; saveData(); renderCourses(); speak('Liste vidée.'); }
+      else speak('Annulé.'); });
+  };
+
+  /* ---------- MÉMOS ---------- */
+  function renderMemos(){
+    const box=document.getElementById('memos-list'); const Lm=state.data.memos;
+    box.innerHTML=Lm.length?'':'<p class="empty">Aucun mémo.</p>';
+    Lm.slice().reverse().forEach(m=>{ const idx=state.data.memos.indexOf(m);
+      const row=document.createElement('div'); row.className='item-row';
+      row.innerHTML=`<span class="txt">${esc(m.t)}<span class="meta">${m.d}</span></span>`;
+      const play=document.createElement('button'); play.className='btn-line'; play.textContent='🔊';
+      play.setAttribute('aria-label','Écouter ce mémo'); play.onclick=()=>speak(`Mémo du ${m.d}. ${m.t}`);
+      const del=document.createElement('button'); del.className='btn-danger'; del.textContent='🗑️';
+      del.setAttribute('aria-label','Supprimer ce mémo');
+      del.onclick=()=>{ state.data.memos.splice(idx,1); saveData(); renderMemos(); speak('Mémo supprimé.'); V.vibrate(30); };
+      row.appendChild(play); row.appendChild(del); box.appendChild(row); });
+  }
+  function addMemo(text){
+    if(!text) return;
+    const n=new Date();
+    const d=`${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')} à ${n.getHours()}h${String(n.getMinutes()).padStart(2,'0')}`;
+    state.data.memos.push({t:cap(text),d}); saveData(); renderMemos(); speak('Mémo enregistré : '+text);
+  }
+  function readMemos(){
+    const Lm=state.data.memos;
+    if(!Lm.length){ speak("Vous n'avez aucun mémo."); return; }
+    speak(`${Lm.length} mémo${Lm.length>1?'s':''}. `+Lm.slice().reverse().map(m=>`Le ${m.d} : ${m.t}`).join('. '));
+  }
+  document.getElementById('btn-add-memo').onclick=()=>V.listen("Je vous écoute, dictez votre mémo.",addMemo);
+  document.getElementById('btn-read-memos').onclick=readMemos;
+
+  /* ---------- RAPPELS ---------- */
+  const fmtH=()=>`${String(state.rH).padStart(2,'0')} h`;
+  const fmtM=()=>`${String(state.rM).padStart(2,'0')} min`;
+  function refreshSteppers(){ document.getElementById('h-val').textContent=fmtH(); document.getElementById('m-val').textContent=fmtM(); }
+  document.getElementById('h-plus').onclick=()=>{state.rH=(state.rH+1)%24;refreshSteppers();speak(`${state.rH} heures`);};
+  document.getElementById('h-moins').onclick=()=>{state.rH=(state.rH+23)%24;refreshSteppers();speak(`${state.rH} heures`);};
+  document.getElementById('m-plus').onclick=()=>{state.rM=(state.rM+15)%60;refreshSteppers();speak(`${state.rM} minutes`);};
+  document.getElementById('m-moins').onclick=()=>{state.rM=(state.rM+45)%60;refreshSteppers();speak(`${state.rM} minutes`);};
+  document.querySelectorAll('#rappel-types .big-btn').forEach(b=>{
+    b.onclick=()=>{ document.querySelectorAll('#rappel-types .big-btn').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel'); state.rappelType=b.dataset.type; speak(`Type : ${state.rappelType}.`); };
+  });
+  document.getElementById('btn-save-rappel').onclick=()=>saveRappel(state.rappelType,state.rH,state.rM);
+  function saveRappel(label,h,m){
+    state.data.rappels.push({label,h,m,last:''}); L.noteRappelHour(h); saveData(); renderRappels();
+    speak(`Rappel enregistré : ${label}, tous les jours à ${h} heure${h>1?'s':''} ${m||''}. L'application doit rester ouverte pour sonner.`);
+    V.vibrate([50,40,50]);
+  }
+  function renderRappels(){
+    const box=document.getElementById('rappels-list'); const Lr=state.data.rappels;
+    box.innerHTML=Lr.length?'':'<p class="empty">Aucun rappel actif.</p>';
+    Lr.forEach((r,i)=>{ const row=document.createElement('div'); row.className='item-row';
+      row.innerHTML=`<span class="txt">${esc(r.label)}<span class="meta">Tous les jours à ${String(r.h).padStart(2,'0')}h${String(r.m).padStart(2,'0')}</span></span>`;
+      const del=document.createElement('button'); del.className='btn-danger'; del.textContent='🗑️';
+      del.setAttribute('aria-label',`Supprimer le rappel ${r.label}`);
+      del.onclick=()=>{ state.data.rappels.splice(i,1); saveData(); renderRappels(); speak('Rappel supprimé.'); };
+      row.appendChild(del); box.appendChild(row); });
+  }
+  setInterval(()=>{ const n=new Date(); const today=n.toISOString().slice(0,10);
+    state.data.rappels.forEach(r=>{ if(r.h===n.getHours()&&r.m===n.getMinutes()&&r.last!==today){ r.last=today; saveData(); fireAlarm(r); } });
+  },15000);
+  function fireAlarm(r){
+    const msg=`Rappel : ${r.label}. Il est ${r.h} heure${r.h>1?'s':''} ${r.m||''}.`;
+    document.getElementById('alarm-text').textContent=msg;
+    document.getElementById('alarm-overlay').classList.add('show');
+    state.alarmRepeats=0;
+    const ring=()=>{ speak(msg); V.vibrate([200,100,200,100,300]); state.alarmRepeats++;
+      if(state.alarmRepeats<6) state.alarmTimer=setTimeout(ring,25000); };
+    ring();
+  }
+  document.getElementById('alarm-ok').onclick=()=>{ clearTimeout(state.alarmTimer);
+    document.getElementById('alarm-overlay').classList.remove('show'); speak("C'est noté."); };
+
+  /* ---------- RÉGLAGES ---------- */
+  function renderSettings(){
+    const plus=T.isPlus();
+    document.getElementById('plan-line').textContent=plus?"Offre ZYÉ Plus active. Merci !":"Offre gratuite.";
+    document.getElementById('btn-upgrade').style.display=plus?'none':'flex';
+    document.getElementById('sos-current').textContent = state.sos&&state.sos.tel
+      ? `Contact : ${state.sos.name} (${state.sos.tel}).` : "Aucun contact enregistré.";
+    const c=C.get();
+    document.getElementById('consent-text').checked=c.text;
+    document.getElementById('consent-photo').checked=c.photo;
+    document.getElementById('rate-val').textContent=RATE_LABELS[state.rateIdx];
+  }
+  document.getElementById('btn-set-sos').onclick=()=>{
+    V.listen("Dites le prénom de votre contact d'urgence.",name=>{
+      V.listen("Maintenant, dites ou écrivez son numéro de téléphone.",tel=>{
+        const clean=tel.replace(/[^+0-9]/g,'');
+        if(clean.length<6){ speak("Numéro non valide. Réessayez."); return; }
+        state.sos={name:cap(name),tel:clean}; saveSos(); renderSettings();
+        speak(`Contact d'urgence enregistré : ${cap(name)}.`);
+      });
+    });
+  };
+  document.getElementById('consent-text').onchange=e=>{
+    C.setText(e.target.checked);
+    speak(e.target.checked?"Partage du texte activé. Merci d'aider à améliorer l'application.":"Partage du texte désactivé.");
+    if(!e.target.checked){ document.getElementById('consent-photo').checked=false; C.setPhoto(false); }
+  };
+  document.getElementById('consent-photo').onchange=e=>{
+    C.setPhoto(e.target.checked);
+    if(e.target.checked) document.getElementById('consent-text').checked=true;
+    speak(e.target.checked?"Partage des photos activé.":"Partage des photos désactivé.");
+  };
+  document.getElementById('btn-read-consent').onclick=()=>speak(
+    "Vous pouvez partager le texte de vos lectures, et si vous le souhaitez les photos, pour aider à rendre l'assistant plus précis. C'est facultatif et anonyme. Vous pouvez tout arrêter et tout supprimer à n'importe quel moment. Rien n'est partagé sans votre accord.");
+  document.getElementById('btn-revoke').onclick=()=>{
+    V.listen("Dites oui pour supprimer définitivement toutes vos contributions partagées.",async t=>{
+      if(/oui|confirme|supprime/i.test(t)){ await C.revokeAll(); renderSettings(); speak("Vos contributions ont été supprimées."); }
+      else speak("Annulé."); });
+  };
+  document.getElementById('rate-plus').onclick=()=>{ state.rateIdx=Math.min(RATES.length-1,state.rateIdx+1); V.setRate(RATES[state.rateIdx]); document.getElementById('rate-val').textContent=RATE_LABELS[state.rateIdx]; speak("Voici la nouvelle vitesse."); };
+  document.getElementById('rate-moins').onclick=()=>{ state.rateIdx=Math.max(0,state.rateIdx-1); V.setRate(RATES[state.rateIdx]); document.getElementById('rate-val').textContent=RATE_LABELS[state.rateIdx]; speak("Voici la nouvelle vitesse."); };
+
+  /* ---------- UPGRADE / STRIPE ---------- */
+  function openUpgrade(){ document.getElementById('upgrade-overlay').classList.add('show');
+    speak("ZYÉ Plus : reconnaissance illimitée, sauvegarde sur tous vos appareils, et voix premium."); }
+  document.getElementById('btn-upgrade').onclick=openUpgrade;
+  document.getElementById('upgrade-cancel').onclick=()=>{ document.getElementById('upgrade-overlay').classList.remove('show'); speak("Pas de souci, plus tard."); };
+  document.getElementById('upgrade-go').onclick=async()=>{
+    /* Chemin correct : create-checkout lie le paiement au user (client_reference_id). */
+    if(cfg.CHECKOUT_ENDPOINT && !cfg.CHECKOUT_ENDPOINT.startsWith("__")){
+      try{
+        speak("Préparation du paiement.");
+        const db=window.ZYE_DB&&window.ZYE_DB.getClient(); const headers={"Content-Type":"application/json"};
+        if(db){ const {data}=await db.auth.getSession(); if(data&&data.session) headers["Authorization"]="Bearer "+data.session.access_token; }
+        const r=await fetch(cfg.CHECKOUT_ENDPOINT,{method:"POST",headers,body:"{}"});
+        const d=await r.json();
+        if(d.url){ window.location.href=d.url; return; }
+      }catch(e){ console.warn(e); }
+    }
+    /* Repli : lien statique (⚠️ ne relie pas automatiquement la licence au compte). */
+    const url=T.checkoutUrl();
+    if(url && !url.startsWith("__")) window.location.href=url;
+    else speak("Le paiement n'est pas encore configuré.");
+  };
+
+  /* ---------- COMMANDES VOCALES ---------- */
+  function handleCommand(raw){
+    const t=norm(raw);
+    if(/au secours|secours|urgence|\bsos\b/.test(t)) return doSos();
+    if(/\baide\b/.test(t)) return sayHelp();
+    if(/ou suis je|ou je suis|ma position|mon adresse/.test(t)) return whereAmI();
+    if(/accueil|menu|retour/.test(t)) return go('home');
+    if(/reglage|parametre|compte/.test(t)) return go('settings');
+    if(/quelle heure|l heure|heure est/.test(t)) return sayTime();
+    if(/couleur/.test(t)){ state.lastMode='couleur'; go('lire',{silent:true}); speak("Détection de couleur. Touchez Quelle couleur."); return; }
+    if(/argent|billet|piece|monnaie/.test(t)){ state.lastMode='argent'; go('lire',{silent:true}); speak("Comptage de l'argent. Touchez Compter l'argent."); return; }
+    if(/decri|autour|devant moi|qu y a t il/.test(t)){ state.lastMode='scene'; go('lire',{silent:true}); speak("Description. Touchez Décrire autour de moi."); return; }
+    if(/^(ajoute|ajouter|mets)\b/.test(t)) return addCourse(raw);
+    if(/(lis|lire|ecoute).*(liste|courses)|ma liste/.test(t)) return readCourses();
+    if(/courses|liste/.test(t)) return go('courses');
+    if(/^(memo|note)\b/.test(t)){ const body=raw.replace(/^(mémo|memo|note)\s*[:,]?\s*/i,'').trim();
+      if(body) return addMemo(body); go('memos',{silent:true}); return V.listen("Je vous écoute, dictez votre mémo.",addMemo); }
+    if(/(mes memos|ecoute.*memos)/.test(t)) return readMemos();
+    if(/memos/.test(t)) return go('memos');
+    if(/photo|camera|scanne|lis|lire/.test(t)){ go('lire',{silent:true}); speak("Lire et voir. Touchez un des quatre boutons pour ouvrir la caméra."); return; }
+    const m=t.match(/rappel\s+(.+?)\s+a\s+(\d{1,2})\s*(?:heures?|h)?\s*(\d{1,2})?/);
+    if(m){ const h=Math.min(23,parseInt(m[2],10)); const mn=m[3]?Math.min(59,parseInt(m[3],10)):0; return saveRappel(cap(m[1]),h,mn); }
+    if(/rappel/.test(t)) return go('rappels');
+    speak("Je n'ai pas compris. Dites par exemple : ajoute du pain. Lis ma liste. Quelle couleur. Où suis-je. Ou : aide.");
+  }
+  document.getElementById('btn-mic').onclick=()=>{
+    if(window.ZYE_VAPI && window.ZYE_VAPI.configured() && T.isPlus()) window.ZYE_VAPI.toggleCall();
+    else V.listen("Je vous écoute.",handleCommand);
+  };
+
+  /* ---------- AIDE / MUTE ---------- */
+  function sayHelp(){
+    speak("Voici ce que je sais faire. Dites : ajoute, puis un article, pour les courses. Lis ma liste. Mémo, puis votre note. Rappel médicament à 8 heures. Quelle couleur, pour identifier une couleur. Compter l'argent. Décris autour de moi. Où suis-je, pour votre adresse. Quelle heure il est. Et en cas de besoin, dites : au secours, pour appeler votre contact d'urgence. Touchez le bouton micro orange en bas pour me parler.");
+  }
+  document.getElementById('btn-help').onclick=sayHelp;
+  const muteBtn=document.getElementById('btn-mute');
+  muteBtn.onclick=()=>{ const m=!V.isMuted(); V.setMuted(m);
+    muteBtn.textContent=m?'🔇':'🔊'; muteBtn.setAttribute('aria-pressed',String(m));
+    if(m) V.setSubtitle("Voix de l'application coupée (pour lecteurs d'écran)."); else speak('Voix activée.'); };
+
+  /* ---------- ASSISTANT VOCAL (Vapi) : actions exposées ---------- */
+  function removeCourse(item){
+    const i=state.data.courses.findIndex(x=>norm(x)===norm(item||''));
+    if(i>=0){ const it=state.data.courses[i]; state.data.courses.splice(i,1); saveData();
+      if(state.currentScreen==='courses') renderCourses(); speak(`${it}, retiré.`); }
+    else speak(`${item||'cet article'} n'est pas dans la liste.`);
+  }
+  function setEmergencyContact(name,phone){
+    const clean=String(phone||'').replace(/[^+0-9]/g,'');
+    if(clean.length<6){ speak("Le numéro d'urgence n'est pas valide."); return; }
+    state.sos={name:cap(name||'Contact'),tel:clean}; saveSos();
+    if(state.currentScreen==='settings') renderSettings();
+    speak(`Contact d'urgence enregistré : ${cap(name||'')}.`);
+  }
+  function startReading(mode){
+    state.lastMode=['lire','couleur','argent','scene'].includes(mode)?mode:'lire';
+    go('lire',{silent:true});
+    const lbl={lire:'Lire le texte',couleur:'Quelle couleur',argent:"Compter l'argent",scene:'Décrire autour de moi'}[state.lastMode];
+    speak(`Pour ${lbl}, touchez le grand bouton à l'écran, puis visez et validez.`);
+  }
+  async function saveProfile(p){
+    p=p||{};
+    try{ localStorage.setItem('zye-profile',JSON.stringify(p)); }catch(e){}
+    localStorage.setItem('zye-onboarded','1');
+    const db=window.ZYE_DB&&window.ZYE_DB.getClient();
+    if(db){ try{ const u=await window.ZYE_DB.ensureSession();
+      if(u){ await db.from('zye_profiles').upsert({user_id:u.id,first_name:p.first_name||null,last_name:p.last_name||null,email:p.email||null,city:p.city||null,consent_purpose:true,updated_at:new Date().toISOString()}); }
+    }catch(e){ console.warn('Profil non enregistré',e); } }
+  }
+  window.ZYE_ACTIONS={
+    addCourse, readCourses, removeCourse, addMemo, readMemos,
+    saveReminder:saveRappel, sayTime, whereAmI,
+    setEmergencyContact, triggerSos:doSos, saveProfile, startReading,
+    navigate:(s)=>go(SCREENS.includes(s)?s:'home')
+  };
+
+  /* ---------- ONBOARDING VOCAL (gratuit, 100% voix) ---------- */
+  function normalizeEmail(s){
+    if(!s) return "";
+    const e = s.toLowerCase().trim()
+      .replace(/\s*(arobase|at|chez)\s*/g,'@')
+      .replace(/\s*(point|dot)\s*/g,'.')
+      .replace(/\s*(tiret|trait d.union)\s*/g,'-')
+      .replace(/\s*(underscore|tiret bas)\s*/g,'_')
+      .replace(/\s+/g,'');
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e) ? e : "";
+  }
+  function spellEmail(e){
+    return e.split('').map(c=> c==='@'?' arobase ': c==='.'?' point ': c==='-'?' tiret ': c==='_'?' underscore ': c).join(' ');
+  }
+  async function runVoiceOnboarding(){
+    const ask = (q, ms=14000)=> new Promise(res=>{
+      let settled=false; const done=v=>{ if(!settled){ settled=true; res((v||'').trim()); } };
+      try{ V.listen(q, done); }catch(e){ done(''); }
+      setTimeout(()=>done(''), ms);          // filet anti-blocage si silence
+    });
+    const yes = t=>/\b(oui|ouais|oui oui|d'accord|daccord|ok|okay|vas-y|allez|go|bien s[uû]r)\b/i.test(t||'');
+    const no  = t=>/\b(non|nan|passer|passe|plus tard|pas maintenant|laisse)\b/i.test(t||'');
+
+    const intro = await ask("Bienvenue sur Zyé. Voulez-vous créer votre profil par la voix ? Dites oui pour commencer, ou non pour passer.");
+    if(no(intro) || !yes(intro)){
+      localStorage.setItem('zye-onboarded','skip');
+      speak("Pas de souci. "+ANNOUNCE.home+" Touchez le point d'interrogation en haut pour les commandes.");
+      return;
+    }
+    let first = await ask("Quel est votre prénom ?");
+    first = cap((first||'').split(/\s+/)[0]||'');
+    if(first) speak(`Enchanté ${first}.`);
+
+    let city = await ask("Dans quelle ville habitez-vous ?");
+    city = cap((city||'').replace(/^(à|a|de|d'|dans)\s+/i,'').trim());
+
+    let email = "";
+    const wantMail = await ask("Voulez-vous ajouter votre e-mail ? C'est utile pour le support. Dites oui, ou dites passer.");
+    if(yes(wantMail)){
+      const raw = await ask("Dites votre adresse e-mail. Dites arobase pour le signe, et point pour le point.", 22000);
+      email = normalizeEmail(raw);
+      if(email){
+        const ok = await ask(`J'ai noté : ${spellEmail(email)}. C'est correct ? Dites oui ou non.`);
+        if(no(ok)) email = "";
+      } else if(raw){
+        speak("Je n'ai pas bien saisi l'e-mail, on le mettra plus tard.");
+      }
+    }
+    await saveProfile({ first_name:first||null, city:city||null, email:email||null });
+    let recap = "C'est enregistré";
+    if(first) recap += `, ${first}`;
+    recap += ". "+ANNOUNCE.home;
+    speak(recap);
+  }
+
+  /* ---------- DÉMARRAGE ---------- */
+  document.getElementById('btn-start').onclick=async()=>{
+    V.unlock(); V.wireTextOverlay();
+    loadData(); L.load(); C.load(); T.load();
+    refreshSteppers(); renderCourses(); renderMemos(); renderRappels();
+    if(window.ZYE_DB){ window.ZYE_DB.init(); await window.ZYE_DB.ensureSession();
+      await T.refreshPlan(); await cloudRestore();
+      document.getElementById('plan-badge').textContent=T.isPlus()?'Plus':'Gratuit'; }
+    state.rH=L.suggestedRappelHour(); refreshSteppers();
+    document.getElementById('start-screen').style.display='none'; V.vibrate(60);
+
+    /* retour de paiement Stripe */
+    const vapiOn = window.ZYE_VAPI && window.ZYE_VAPI.configured() && T.isPlus(); // Mix : Vapi réservé au Plus
+    if(/[?&]upgraded=1/.test(location.search)){
+      speak("Merci ! Votre abonnement ZYÉ Plus est en cours d'activation.");
+      setTimeout(async()=>{ await T.refreshPlan(); document.getElementById('plan-badge').textContent=T.isPlus()?'Plus':'Gratuit';
+        if(T.isPlus()) speak("ZYÉ Plus est activé."); }, 4000);
+      if(vapiOn) window.ZYE_VAPI.startWake();
+    } else if(vapiOn){
+      if(localStorage.getItem('zye-onboarded')){
+        speak("Bienvenue. Dites « Zyé » à voix haute quand vous voulez me parler. "+ANNOUNCE.home);
+        window.ZYE_VAPI.startWake();
+      } else {
+        window.ZYE_VAPI.boot();   // 1er lancement : l'assistant vous accueille et configure l'app avec vous
+      }
+    } else {
+      if(!localStorage.getItem('zye-onboarded')){
+        runVoiceOnboarding();                 // 1er lancement gratuit : profil par la voix
+      } else {
+        speak("Bon retour sur Zyé. "+ANNOUNCE.home+" Touchez le point d'interrogation en haut pour réécouter les commandes.");
+      }
+    }
+  };
+})();
+
+</script>
+<script type="module">
+/* ZYÉ × Vapi — assistant vocal conversationnel dans le navigateur (sans numéro).
+   - Réveil au mot-clé « Zyé » via reconnaissance locale gratuite (best-effort).
+   - Démarre un appel Vapi avec un assistant INLINE (pas besoin de dashboard).
+   - Les "tools" sont CLIENT-SIDE : Vapi émet des tool-calls que l'on exécute
+     directement dans l'app (ajouter une course, régler un rappel, profil, etc.).
+   Module ES : chargé en <script type="module">, expose window.ZYE_VAPI.
+   ⚠️ Vapi est facturé à la minute → l'assistant se coupe après silence (coût maîtrisé). */
+import Vapi from "https://esm.sh/@vapi-ai/web@2";
+
+const cfg = window.ZYE_CONFIG || {};
+let vapi = null;
+let inCall = false;
+let wakeRec = null;
+let wakeOn = false;
+
+function configured(){ return !!(cfg.VAPI_PUBLIC_KEY && !cfg.VAPI_PUBLIC_KEY.startsWith("__")); }
+
+/* ---------- Définition de l'assistant (inline) ---------- */
+function assistantConfig(){
+  const A = window.ZYE_ACTIONS || {};
+  return {
+    name: "ZYÉ",
+    firstMessage: "Je suis là. Que voulez-vous faire ?",
+    silenceTimeoutSeconds: 30,
+    maxDurationSeconds: 600,
+    clientMessages: ["tool-calls", "transcript"],
+    transcriber: { provider: "deepgram", model: "nova-2", language: "fr" },
+    // Voix : par défaut "vapi/Elliot" (fonctionne tout de suite mais accent anglais).
+    // ➜ Pour un français naturel, mets une voix 11labs FR via VAPI_VOICE_* (voir config).
+    voice: cfg.VAPI_VOICE_PROVIDER && !String(cfg.VAPI_VOICE_PROVIDER).startsWith("__")
+      ? { provider: cfg.VAPI_VOICE_PROVIDER, voiceId: cfg.VAPI_VOICE_ID }
+      : { provider: "vapi", voiceId: "Elliot" },
+    model: {
+      provider: (cfg.VAPI_MODEL_PROVIDER && !String(cfg.VAPI_MODEL_PROVIDER).startsWith("__")) ? cfg.VAPI_MODEL_PROVIDER : "anthropic",
+      model: (cfg.VAPI_MODEL && !String(cfg.VAPI_MODEL).startsWith("__")) ? cfg.VAPI_MODEL : "claude-haiku-4-5-20251001",
+      messages: [{ role: "system", content: SYSTEM_PROMPT }],
+      tools: TOOLS
+    }
+  };
+}
+
+const SYSTEM_PROMPT = `Tu es ZYÉ, l'assistant vocal d'une personne aveugle ou malvoyante. Tu es ses yeux et ses oreilles. Parle UNIQUEMENT en français, avec des phrases courtes, claires et chaleureuses, sans jargon.
+
+Ton rôle : l'aider à CHAQUE tâche et AGIR à sa place en utilisant les outils disponibles. Quand la personne demande quelque chose qu'un outil peut faire, appelle l'outil au lieu de seulement décrire.
+
+Onboarding (au tout premier échange seulement) : présente-toi en une phrase, puis propose de créer son profil. Demande, un élément à la fois : son prénom, puis son adresse e-mail (fais-la répéter et relis-la lettre par lettre pour confirmer), puis sa ville. Quand tu as confirmé, appelle l'outil save_profile. Précise que ces informations servent à créer son compte et à la contacter pour le support, et qu'elle peut refuser.
+
+Règles : ne devine jamais une information incertaine. Pour lire une étiquette, un courrier, une couleur ou compter de l'argent, tu ne peux pas prendre la photo toi-même : guide-la en appelant start_reading avec le bon mode, puis dis-lui de toucher le grand bouton à l'écran. En cas d'urgence, appelle trigger_sos. Reste bref : si la personne ne dit plus rien, laisse le silence (l'appel se coupe tout seul).`;
+
+/* ---------- Outils CLIENT-SIDE (exécutés dans l'app) ---------- */
+const TOOLS = [
+  fn("add_course","Ajoute un article à la liste de courses.",{item:{type:"string",description:"Nom de l'article"}},["item"]),
+  fn("read_courses","Lit à voix haute la liste de courses.",{}),
+  fn("remove_course","Retire un article de la liste de courses.",{item:{type:"string"}},["item"]),
+  fn("add_memo","Enregistre un mémo vocal dicté par la personne.",{text:{type:"string"}},["text"]),
+  fn("read_memos","Lit les mémos enregistrés.",{}),
+  fn("set_reminder","Crée un rappel quotidien.",{label:{type:"string",description:"Ex: Médicament, Rendez-vous"},hour:{type:"integer"},minute:{type:"integer"}},["label","hour"]),
+  fn("say_time","Donne l'heure et la date.",{}),
+  fn("locate","Donne la position / l'adresse approximative.",{}),
+  fn("set_emergency_contact","Définit le contact d'urgence pour le SOS.",{name:{type:"string"},phone:{type:"string"}},["name","phone"]),
+  fn("trigger_sos","Déclenche le SOS : appelle le contact d'urgence.",{}),
+  fn("save_profile","Enregistre le profil de la personne.",{first_name:{type:"string"},email:{type:"string"},city:{type:"string"},last_name:{type:"string"}},["first_name"]),
+  fn("start_reading","Ouvre le module caméra dans un mode donné (lire, couleur, argent, scene) et guide la personne à toucher le bouton.",{mode:{type:"string",enum:["lire","couleur","argent","scene"]}},["mode"]),
+  fn("navigate","Va sur un écran de l'app.",{screen:{type:"string",enum:["home","lire","courses","memos","rappels","settings"]}},["screen"])
+];
+function fn(name,description,props,required){
+  return { type:"function", function:{ name, description,
+    parameters:{ type:"object", properties:props||{}, required:required||[] } } };
+}
+
+/* ---------- Exécution des tool-calls → actions de l'app ---------- */
+function runTool(name, args){
+  const A = window.ZYE_ACTIONS || {};
+  try{
+    switch(name){
+      case "add_course": A.addCourse && A.addCourse(args.item); break;
+      case "read_courses": A.readCourses && A.readCourses(); break;
+      case "remove_course": A.removeCourse && A.removeCourse(args.item); break;
+      case "add_memo": A.addMemo && A.addMemo(args.text); break;
+      case "read_memos": A.readMemos && A.readMemos(); break;
+      case "set_reminder": A.saveReminder && A.saveReminder(args.label, parseInt(args.hour,10)||8, parseInt(args.minute,10)||0); break;
+      case "say_time": A.sayTime && A.sayTime(); break;
+      case "locate": A.whereAmI && A.whereAmI(); break;
+      case "set_emergency_contact": A.setEmergencyContact && A.setEmergencyContact(args.name, args.phone); break;
+      case "trigger_sos": A.triggerSos && A.triggerSos(); break;
+      case "save_profile": A.saveProfile && A.saveProfile(args); break;
+      case "start_reading": A.startReading && A.startReading(args.mode||"lire"); break;
+      case "navigate": A.navigate && A.navigate(args.screen||"home"); break;
+    }
+  }catch(e){ console.warn("Tool error", name, e); }
+}
+function handleMessage(msg){
+  if(!msg || msg.type !== "tool-calls") return;
+  const calls = msg.toolCalls || msg.toolCallList || msg.tool_calls || [];
+  calls.forEach(c=>{
+    const f = c.function || c;
+    let args = f.arguments;
+    if(typeof args === "string"){ try{ args = JSON.parse(args); }catch(e){ args = {}; } }
+    runTool(f.name, args || {});
+  });
+}
+
+/* ---------- Cycle d'appel Vapi ---------- */
+function ensure(){
+  if(vapi) return vapi;
+  vapi = new Vapi(cfg.VAPI_PUBLIC_KEY);
+  vapi.on("call-start", ()=>{ inCall=true; stopWake(); setMic(true); });
+  vapi.on("call-end",   ()=>{ inCall=false; setMic(false); startWake(); });
+  vapi.on("message", handleMessage);
+  vapi.on("error", e=>console.warn("Vapi error", e));
+  return vapi;
+}
+async function startCall(){
+  if(inCall) return;
+  try{ ensure().start(assistantConfig()); }
+  catch(e){ console.warn("Vapi start KO", e); }
+}
+function stopCall(){ if(vapi && inCall){ try{ vapi.stop(); }catch(e){} } }
+function toggleCall(){ inCall ? stopCall() : startCall(); }
+function setMic(on){
+  const b=document.getElementById("btn-mic"); if(!b) return;
+  b.classList.toggle("listening", on);
+  b.textContent = on ? "⏹️" : "🎤";
+}
+
+/* ---------- Mot-clé « Zyé » (reconnaissance locale gratuite) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function startWake(){
+  if(!SR || wakeOn || inCall) return;
+  try{
+    wakeRec = new SR();
+    wakeRec.lang="fr-FR"; wakeRec.continuous=true; wakeRec.interimResults=true;
+    wakeRec.onresult = e=>{
+      const txt = Array.from(e.results).map(r=>r[0].transcript).join(" ").toLowerCase();
+      if(/\b(zy[ée]|zié|hey zy[ée])\b/.test(txt)){ stopWake(); startCall(); }
+    };
+    wakeRec.onend = ()=>{ wakeOn=false; if(!inCall) setTimeout(startWake,400); }; // relance
+    wakeRec.onerror = ()=>{ wakeOn=false; };
+    wakeRec.start(); wakeOn=true;
+  }catch(e){ wakeOn=false; }
+}
+function stopWake(){ wakeOn=false; if(wakeRec){ try{ wakeRec.stop(); }catch(e){} wakeRec=null; } }
+
+/* ---------- Démarrage : appelé par app.js après le tap de lancement ---------- */
+function boot(){
+  if(!configured()) return false;
+  // 1er lancement : on démarre directement un appel pour l'onboarding vocal.
+  // Ensuite, le mot-clé « Zyé » réveillera l'assistant.
+  startCall();
+  return true;
+}
+
+window.ZYE_VAPI = { configured, boot, startCall, stopCall, toggleCall, startWake, stopWake };
+
+</script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
   }
+</script>
+<script>
+(function(){
+  var deferred=null, btn;
+  function standalone(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }
+  function ios(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+  function say(t){ if(window.ZYE_VOICE&&window.ZYE_VOICE.speak) window.ZYE_VOICE.speak(t,{interrupt:false}); }
+  function show(){ if(btn) btn.style.display='block'; }
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred=e; show(); });
+  window.addEventListener('appinstalled', function(){ if(btn) btn.style.display='none'; try{localStorage.setItem('zye-installed','1');}catch(_){} say("ZYE est installe sur votre telephone."); });
+  window.ZYE_INSTALL={
+    available:function(){ return !!deferred || (ios() && !standalone()); },
+    run:async function(){
+      if(deferred){ deferred.prompt(); try{ await deferred.userChoice; }catch(_){} deferred=null; return; }
+      if(ios()){ say("Pour installer ZYE : touchez le bouton Partager, en bas de l'ecran, puis choisissez sur l'ecran d'accueil, puis Ajouter."); return; }
+      say("Pour installer : ouvrez le menu de votre navigateur, puis choisissez Installer l'application, ou Ajouter a l'ecran d'accueil.");
+    }
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    btn=document.getElementById('btn-install');
+    if(btn){ btn.addEventListener('click', function(){ window.ZYE_INSTALL.run(); }); if(ios() && !standalone()) show(); }
+  });
+  window.addEventListener('load', function(){
+    if(standalone()) return;
+    setTimeout(function(){
+      try{ if(localStorage.getItem('zye-install-offered')) return; }catch(_){}
+      if(window.ZYE_INSTALL.available()){
+        try{ localStorage.setItem('zye-install-offered','1'); }catch(_){}
+        say("Astuce : vous pouvez installer ZYE sur votre telephone. Touchez le bouton Installer l'app, en haut de l'accueil.");
+      }
+    }, 11000);
+  });
+})();
 </script>
 </body>
 </html>
